@@ -30,6 +30,59 @@ async def hello(ctx):
 async def echo(ctx, *, message: str):
     await ctx.send(message)
 
+@bot.command()
+async def add(ctx, a: int, b: int):
+    result = a + b
+    await ctx.send(f"The sum of {a} and {b} is {result}.")
+
+@bot.command()
+async def subtract(ctx, a: int, b: int):
+    result = a - b
+    await ctx.send(f"The difference between {a} and {b} is {result}.")
+
+@bot.command()
+async def multiply(ctx, a: int, b: int):
+    result = a * b
+    await ctx.send(f"The product of {a} and {b} is {result}.")
+
+@bot.command()
+async def divide(ctx, a: int, b: int):
+    if b == 0:
+        await ctx.send("Cannot divide by zero.")
+    else:
+        result = a / b
+        await ctx.send(f"The quotient of {a} and {b} is {result}.")
+
+@bot.command()
+async def info(ctx):
+    embed = disnake.Embed(title="Bot Information", description="This is a simple bot created with Disnake.", color=0x00ff00)
+    embed.add_field(name="Bot Name", value=bot.user.name, inline=True)
+    embed.add_field(name="Bot ID", value=bot.user.id, inline=True)
+    embed.add_field(name="Commands", value="Use !help to see available commands.", inline=False)
+    await ctx.send(embed=embed)
+
+@bot.command()
+async def help(ctx):
+    embed = disnake.Embed(title="Help", description="List of available commands:", color=0x00ff00)
+    embed.add_field(name="!ping", value="Check if the bot is online.", inline=False)
+    embed.add_field(name="!hello", value="Greet the bot.", inline=False)
+    embed.add_field(name="!echo <message>", value="Echo back the provided message.", inline=False)
+    embed.add_field(name="!add <a> <b>", value="Add two numbers.", inline=False)
+    embed.add_field(name="!subtract <a> <b>", value="Subtract two numbers.", inline=False)
+    embed.add_field(name="!multiply <a> <b>", value="Multiply two numbers.", inline=False)
+    embed.add_field(name="!divide <a> <b>", value="Divide two numbers.", inline=False)
+    embed.add_field(name="!info", value="Get information about the bot.", inline=False)
+    await ctx.send(embed=embed)
+
+@bot.command()
+@commands.has_permissions(manage_messages=True)
+async def clear(ctx, amount: int):
+    if amount < 1 or amount > 100:
+        await ctx.send("Please specify a number between 1 and 100.")
+        return
+    deleted = await ctx.channel.purge(limit=amount + 1)
+    await ctx.send(f"Deleted {len(deleted) - 1} messages.", delete_after=5)
+
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
